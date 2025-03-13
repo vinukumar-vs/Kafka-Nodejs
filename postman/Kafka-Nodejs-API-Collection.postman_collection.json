@@ -1,0 +1,331 @@
+{
+	"info": {
+		"_postman_id": "a1f2f14e-2e38-496b-a702-77aa3dccc2f4",
+		"name": "Kafka-Nodejs-API-Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25186239"
+	},
+	"item": [
+		{
+			"name": "Kafka-Producer",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var seqQIndex = pm.collectionVariables.get(\"seqQIndex\");",
+							"if(seqQIndex == null) { ",
+							"    seqQIndex = 1;",
+							"} "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var seqQIndex = pm.collectionVariables.get(\"seqQIndex\");",
+							"seqQIndex++",
+							"console.log(\"seqQIndex: \"+ seqQIndex);",
+							"pm.collectionVariables.set(\"seqQIndex\", seqQIndex);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"topic\": \"{{kafka-topic-name}}\",\n    \"message\": \"{{seqQIndex}} - Trip 40020{{seqQIndex}} started\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/produce",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"produce"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "default",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"topic\": \"{{kafka-topic-name}}\",\n    \"message\": \"{{seqQIndex}} - Trip 40020{{seqQIndex}} started\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/produce",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"produce"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "95"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"5f-NUkzmFvVZMOUpLwuUUFIu5OmJoI\""
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 13 Mar 2025 07:43:58 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"Message sent to Kafka\",\n    \"topic\": \"tripUpdates\",\n    \"message\": \"null - Trip 879329 started\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Kafka-Consumer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/consume",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"consume"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "default",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/consume",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"consume"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "99"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"63-5baVopd+sTi4943HM2MkKAwqV3c\""
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 13 Mar 2025 09:41:36 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"processedMessages\": [\n        {\n            \"topic\": \"tripUpdates\",\n            \"partition\": 0,\n            \"message\": \"29 - Trip 4002029 started\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Kafka-Lag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/lag?topic={{kafka-topic-name}}&groupId={{kafka-group-name}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"lag"
+					],
+					"query": [
+						{
+							"key": "topic",
+							"value": "{{kafka-topic-name}}"
+						},
+						{
+							"key": "groupId",
+							"value": "{{kafka-group-name}}"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:3000/lag?topic=tripUpdates&groupId=trip-group\"\n"
+			},
+			"response": [
+				{
+					"name": "default",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/lag?topic={{kafka-topic-name}}&groupId={{kafka-group-name}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"lag"
+							],
+							"query": [
+								{
+									"key": "topic",
+									"value": "{{kafka-topic-name}}"
+								},
+								{
+									"key": "groupId",
+									"value": "{{kafka-group-name}}"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "125"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"7d-YnaW6i2cBPxbH3tg7+UzHOi5WOw\""
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 13 Mar 2025 08:42:54 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"topic\": \"tripUpdates\",\n    \"groupId\": \"trip-group\",\n    \"lagInfo\": [\n        {\n            \"partition\": 0,\n            \"logEndOffset\": \"90\",\n            \"consumerOffset\": \"73\",\n            \"lag\": 17\n        }\n    ]\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "kafka-topic-name",
+			"value": "tripUpdates",
+			"type": "string"
+		},
+		{
+			"key": "kafka-group-name",
+			"value": "trip-group",
+			"type": "string"
+		},
+		{
+			"key": "seqQIndex",
+			"value": "1"
+		}
+	]
+}

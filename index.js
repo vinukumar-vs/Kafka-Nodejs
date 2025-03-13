@@ -32,19 +32,30 @@ app.get("/consume", async (req, res) => {
     res.json({ processedMessages: consumedMessages });
 });
 
-// ✅ Kafka Consumer (Runs in Background)
+
+// ✅ Kafka Consumer with Manual Offset Management & Failures
 const startConsumer = async () => {
     await consumer.connect();
     await consumer.subscribe({ topic: "tripUpdates", fromBeginning: true });
 
     await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
+        autoCommit: false, // ✅ Disable Auto-Commit to Handle Lag Properly
+        eachMessage: async ({ topic, partition, message, heartbeat, commitOffsetsIfNecessary }) => {
             const msg = message.value.toString();
-            console.log(`Consumed: ${msg}`);
+            console.log(`Received: ${msg}`);
+
+            // Simulate failure for 30% of messages
+            if (Math.random() < 0.3) {
+                console.error(`❌ Failed processing message: ${msg}`);
+                return; // Skipping commit will cause lag
+            }
+
+            console.log(`✅ Successfully processed: ${msg}`);
             consumedMessages.push({ topic, partition, message: msg });
 
-            // Optional: Remove old messages to prevent memory overflow
-            if (consumedMessages.length > 100) consumedMessages.shift();
+            // ✅ Manually commit offsets only for successfully processed messages
+            await commitOffsetsIfNecessary([{ topic, partition, offset: (parseInt(message.offset) + 1).toString() }]);
+            await heartbeat(); // Prevent consumer from timing out
         },
     });
 };
