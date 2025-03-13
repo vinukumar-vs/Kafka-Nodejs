@@ -1,0 +1,22 @@
+{
+  "name": "kafka-nodejs",
+  "version": "1.0.0",
+  "description": "Kafka integration with NodeJs for event queue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "kafka",
+    "nodejs",
+    "event",
+    "queue"
+  ],
+  "author": "Vinu Kumar V S",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "kafkajs": "^2.2.4"
+  }
+}
